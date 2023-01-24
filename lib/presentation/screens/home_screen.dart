@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:sneakers_shop/core/theme.dart';
+import 'package:sneakers_shop/presentation/domain/snekaer_entity.dart';
+import 'package:sneakers_shop/presentation/screens/widgets/carousel_card.dart';
+import 'package:sneakers_shop/presentation/screens/widgets/default_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,6 +23,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   final categoryFilterList = ['New', 'Featured', 'Upcoming'];
 
+  final itemsList = [
+    SneakerEntity(
+        brandName: 'NIKE',
+        modelName: 'EPIC-REACT',
+        price: '\$130.00',
+        imagePath: 'assets/images/sneaker_01.png',
+        backgroundColor: Colors.cyan),
+    SneakerEntity(
+        brandName: 'NIKE',
+        modelName: 'AIR-MAX',
+        price: '\$130.00',
+        imagePath: 'assets/images/sneaker_02.png',
+        backgroundColor: Colors.purple),
+    SneakerEntity(
+        brandName: 'NIKE',
+        modelName: 'AIR-270',
+        price: '\$150.00',
+        imagePath: 'assets/images/sneaker_03.png',
+        backgroundColor: Colors.teal),
+    SneakerEntity(
+        brandName: 'NIKE',
+        modelName: 'AIR-MONARCH',
+        price: '\$100.00',
+        imagePath: 'assets/images/sneaker_04.png',
+        backgroundColor: Colors.redAccent),
+  ];
+
   late TabController _horizontalTabController;
   late TabController _verticalTabController;
   late PageController _sneakersPageController;
@@ -36,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     _sneakersPageController = PageController(
       initialPage: 0,
       keepPage: false,
-      viewportFraction: 0.8,
+      viewportFraction: 0.85,
     );
     _horizontalTabController.addListener(() {
       setState(() {
@@ -125,46 +153,47 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         type: BottomNavigationBarType.fixed,
+        backgroundColor: SneakerShopTheme.lightGrey,
+        elevation: 0,
         items: const [
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.home,
+              Icons.home_outlined,
               color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.favorite,
+              Icons.favorite_outline_outlined,
               color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.pin_drop,
+              Icons.pin_drop_outlined,
               color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.shopping_cart,
+              Icons.shopping_cart_outlined,
               color: Colors.black,
             ),
           ),
           BottomNavigationBarItem(
             label: '',
             icon: Icon(
-              Icons.person,
+              Icons.person_outlined,
               color: Colors.black,
             ),
           ),
         ],
       ),
-      body: Padding(
-          padding: const EdgeInsets.only(left: 10), child: _buildBody()),
+      body: _buildBody(),
     );
   }
 
@@ -173,6 +202,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       child: Column(
         children: [
           _buildCards(),
+          const SizedBox(
+            height: 20,
+          ),
+          _buildMoreSection()
         ],
       ),
     );
@@ -184,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         RotatedBox(
           quarterTurns: 3,
           child: SizedBox(
-            width: 400,
+            width: 330,
             child: TabBar(
               controller: _verticalTabController,
               overlayColor:
@@ -199,19 +232,63 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
         Flexible(
           child: SizedBox(
-            height: 400,
+            height: 380,
             child: PageView.builder(
               padEnds: false,
               controller: _sneakersPageController,
+              itemCount: itemsList.length,
               itemBuilder: (context, index) {
-                return const Card(
-                  margin: EdgeInsets.only(left: 30, top: 20, bottom: 20),
-                  color: Colors.cyan,
-                  child: Text('Sneaker'),
+                return CarouselCard(
+                  brandName: itemsList[index].brandName,
+                  modelName: itemsList[index].modelName,
+                  price: itemsList[index].price,
+                  imagePath: itemsList[index].imagePath,
+                  backgroundColor: itemsList[index].backgroundColor,
                 );
               },
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  _buildMoreSection() {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+            width: double.infinity,
+            height: 100,
+            color: SneakerShopTheme.lightGrey),
+        Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: _buildSectionTitle(),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Row(
+                children: const [
+                  Expanded(
+                    child: DefaultCard(
+                      sneakerName: 'NIKE AIR-MAX',
+                      sneakerPrice: '\$170.00',
+                      imagePath: 'assets/images/sneaker_05.png',
+                    ),
+                  ),
+                  Expanded(
+                    child: DefaultCard(
+                      sneakerName: 'NIKE AIR FORCE',
+                      sneakerPrice: '\$130.00',
+                      imagePath: 'assets/images/sneaker_06.png',
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
         ),
       ],
     );
@@ -237,5 +314,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ));
     }
     return tabs;
+  }
+
+  _buildSectionTitle() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'More',
+            style: TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w700, fontSize: 18),
+          ),
+          SizedBox(
+            height: 28,
+            width: 28,
+            child: Image.asset(
+              'assets/icons/arrow_right_long.png',
+              scale: 4,
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
