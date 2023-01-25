@@ -7,56 +7,61 @@ class CarouselCard extends StatelessWidget {
       required this.price,
       required this.imagePath,
       this.backgroundColor = Colors.teal,
+      this.onTap,
       super.key});
   final String brandName;
   final String modelName;
   final String price;
   final String imagePath;
   final Color? backgroundColor;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Card(
-          margin:
-              const EdgeInsets.only(left: 5, right: 30, top: 20, bottom: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-          color: backgroundColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildTopContent(),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-                  height: 28,
-                  width: 28,
-                  child: Image.asset(
-                    'assets/icons/arrow_right_long.png',
-                    color: Colors.white,
+    return GestureDetector(
+      onTap: () => onTap?.call(),
+      child: Stack(
+        children: [
+          Card(
+            margin:
+                const EdgeInsets.only(left: 5, right: 30, top: 20, bottom: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+            color: backgroundColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildTopContent(),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 28,
+                    width: 28,
+                    child: Image.asset(
+                      'assets/icons/arrow_right_long.png',
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-        Positioned.fill(
-          top: 10,
-          left: 10,
-          right: -10,
-          child: Align(
-            alignment: Alignment.center,
-            child: SizedBox(
-              height: 270,
-              child: Image.asset(imagePath),
+                )
+              ],
             ),
           ),
-        )
-      ],
+          Positioned.fill(
+            top: 10,
+            left: 10,
+            right: -10,
+            child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                height: 270,
+                child: Image.asset(imagePath),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
