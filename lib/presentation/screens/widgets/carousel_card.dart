@@ -22,30 +22,33 @@ class CarouselCard extends StatelessWidget {
       onTap: () => onTap?.call(),
       child: Stack(
         children: [
-          Card(
-            margin:
-                const EdgeInsets.only(left: 5, right: 30, top: 20, bottom: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            color: backgroundColor,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildTopContent(),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: SizedBox(
-                    height: 28,
-                    width: 28,
-                    child: Image.asset(
-                      'assets/icons/arrow_right_long.png',
-                      color: Colors.white,
+          Hero(
+            tag: '$backgroundColor',
+            child: Card(
+              margin: const EdgeInsets.only(
+                  left: 5, right: 30, top: 20, bottom: 20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              color: backgroundColor,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildTopContent(),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: SizedBox(
+                      height: 28,
+                      width: 28,
+                      child: Image.asset(
+                        'assets/icons/arrow_right_long.png',
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
           Positioned.fill(
@@ -56,7 +59,7 @@ class CarouselCard extends StatelessWidget {
               alignment: Alignment.center,
               child: SizedBox(
                 height: 270,
-                child: Image.asset(imagePath),
+                child: Hero(tag: imagePath, child: Image.asset(imagePath)),
               ),
             ),
           )

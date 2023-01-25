@@ -246,11 +246,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   imagePath: itemsList[index].imagePath,
                   backgroundColor: itemsList[index].backgroundColor,
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SneakerDetailedScreen(
-                                entity: itemsList[index],
-                              ))),
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) =>
+                          SneakerDetailedScreen(entity: itemsList[index]),
+                      transitionDuration: const Duration(milliseconds: 400),
+                      transitionsBuilder: (_, a, __, c) => SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.2),
+                          end: Offset.zero,
+                        ).animate(a),
+                        child: FadeTransition(
+                          opacity: a,
+                          child: c,
+                        ),
+                      ),
+                    ),
+                  ),
                 );
               },
             ),
