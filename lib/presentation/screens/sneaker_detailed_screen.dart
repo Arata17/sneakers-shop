@@ -23,63 +23,89 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
     '12'
   ];
   var _selectedIndex = -1;
+  var hasAppBar = false;
+  @override
+  void didChangeDependencies() {
+    var route = ModalRoute.of(context);
+    route?.animation?.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() {
+          hasAppBar = true;
+        });
+      }
+    });
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leadingWidth: 34,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Image.asset(
-              'assets/icons/arrow_left_long.png',
-              color: Colors.white,
-            ),
-          ),
-        ),
-        title: const Text(
-          'NIKE',
-          style: TextStyle(
-              color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10.0),
-            child: SizedBox(
-              height: 38,
-              width: 38,
-              child: Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: kElevationToShadow[2],
-                  color: widget.entity.backgroundColor.withOpacity(0.8),
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.favorite_outline_outlined,
+      appBar: hasAppBar
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leadingWidth: 34,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      hasAppBar = false;
+                    });
+                    Navigator.pop(context);
+                  },
+                  child: Image.asset(
+                    'assets/icons/arrow_left_long.png',
+                    color: Colors.white,
                   ),
                 ),
               ),
-            ),
-          )
-        ],
-      ),
+              title: const Text(
+                'NIKE',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: SizedBox(
+                    height: 38,
+                    width: 38,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: kElevationToShadow[2],
+                        color: widget.entity.backgroundColor.withOpacity(0.8),
+                      ),
+                      child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.favorite_outline_outlined,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )
+          : null,
       body: Stack(
         children: [
           Positioned(
             right: -200,
             top: -300,
-            child: Container(
-              height: 600,
-              width: 600,
-              decoration: BoxDecoration(
-                  color: widget.entity.backgroundColor, shape: BoxShape.circle),
+            child: Hero(
+              tag: '${widget.entity.backgroundColor}',
+              child: Container(
+                height: 600,
+                width: 600,
+                decoration: BoxDecoration(
+                    color: widget.entity.backgroundColor,
+                    shape: BoxShape.circle),
+              ),
             ),
           ),
           _buildBody()
@@ -94,8 +120,11 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 40.0, right: 20, left: 20),
-            child: Image.asset(
-              widget.entity.imagePath,
+            child: Hero(
+              tag: widget.entity.imagePath,
+              child: Image.asset(
+                widget.entity.imagePath,
+              ),
             ),
           ),
           _buildPreview(),
