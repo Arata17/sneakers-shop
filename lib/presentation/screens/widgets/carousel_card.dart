@@ -6,6 +6,7 @@ class CarouselCard extends StatelessWidget {
       required this.modelName,
       required this.price,
       required this.imagePath,
+      required this.progress,
       this.backgroundColor = Colors.teal,
       this.onTap,
       super.key});
@@ -15,6 +16,7 @@ class CarouselCard extends StatelessWidget {
   final String imagePath;
   final Color? backgroundColor;
   final VoidCallback? onTap;
+  final double progress;
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +57,16 @@ class CarouselCard extends StatelessWidget {
             top: 10,
             left: 10,
             right: -10,
-            child: Align(
-              alignment: Alignment.center,
-              child: SizedBox(
-                height: 270,
-                child: Hero(tag: imagePath, child: Image.asset(imagePath)),
+            child: Transform(
+              transform: Matrix4.rotationZ(
+                progress * 2,
+              )..translate(0.0, -progress / 4),
+              child: Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: 270,
+                  child: Hero(tag: imagePath, child: Image.asset(imagePath)),
+                ),
               ),
             ),
           )
