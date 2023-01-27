@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sneakers_shop/core/theme.dart';
-import 'package:sneakers_shop/presentation/domain/snekaer_entity.dart';
+import 'package:sneakers_shop/domain/cart_entity.dart';
+import 'package:sneakers_shop/domain/snekaer_entity.dart';
+import 'package:sneakers_shop/presentation/cubit/cart_cubit.dart';
+import 'package:sneakers_shop/presentation/screens/widgets/sneaker_shop_elevated_button.dart';
+
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SneakerDetailedScreen extends StatefulWidget {
   const SneakerDetailedScreen({required this.entity, super.key});
@@ -11,6 +16,7 @@ class SneakerDetailedScreen extends StatefulWidget {
 }
 
 class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
+  // final CartCubit _cartCubit = CartCubit();
   final List<bool> _selectedContry = [true, false];
   final List<String> _sizes = [
     '7.5',
@@ -24,6 +30,12 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
   ];
   var _selectedIndex = -1;
   var hasAppBar = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   void didChangeDependencies() {
     var route = ModalRoute.of(context);
@@ -34,6 +46,7 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
         });
       }
     });
+
     super.didChangeDependencies();
   }
 
@@ -139,7 +152,26 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
           ),
           _buildDescription(),
           _buildSizeSection(),
-          _buildElevatedButton()
+          Padding(
+            padding: const EdgeInsets.only(
+                right: 20.0, left: 20.0, top: 30.0, bottom: 20),
+            child: SneakerShopElevatedButton(
+              text: 'ADD TO BAG',
+              onPressed: () {
+                context.read<CartCubit>().addToCart(
+                    CartEntity(
+                      modelName: widget.entity.modelName,
+                      price: widget.entity.price,
+                      imagePath: widget.entity.imagePath,
+                    ),
+                    1);
+                context.read<CartCubit>().getCartBufferItems();
+                context.read<CartCubit>().getCartItems();
+                print(context.read<CartCubit>().bufferList);
+                print(context.read<CartCubit>().cartList);
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -383,35 +415,6 @@ class _SneakerDetailedScreenState extends State<SneakerDetailedScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  _buildElevatedButton() {
-    return Padding(
-      padding:
-          const EdgeInsets.only(right: 20.0, left: 20.0, top: 30.0, bottom: 20),
-      child: SizedBox(
-        width: double.infinity,
-        height: 44,
-        child: ElevatedButton(
-          onPressed: () {
-            // TODO Add to bloc
-          },
-          style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(SneakerShopTheme.mainRedColor),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(7.0),
-              ),
-            ),
-          ),
-          child: const Text(
-            'ADD TO BAG',
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
       ),
     );
   }

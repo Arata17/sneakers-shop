@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sneakers_shop/core/theme.dart';
-import 'package:sneakers_shop/presentation/domain/snekaer_entity.dart';
+import 'package:sneakers_shop/domain/snekaer_entity.dart';
+import 'package:sneakers_shop/presentation/screens/cart_screen.dart';
 import 'package:sneakers_shop/presentation/screens/sneaker_detailed_screen.dart';
 import 'package:sneakers_shop/presentation/screens/widgets/carousel_card.dart';
 import 'package:sneakers_shop/presentation/screens/widgets/default_card.dart';
@@ -169,6 +170,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         type: BottomNavigationBarType.fixed,
         backgroundColor: SneakerShopTheme.lightGrey,
         elevation: 0,
+        onTap: (value) {
+          if (value == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CartScreen(),
+              ),
+            );
+          }
+        },
         items: const [
           BottomNavigationBarItem(
             label: '',
