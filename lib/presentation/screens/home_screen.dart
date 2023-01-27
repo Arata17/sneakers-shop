@@ -17,6 +17,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   late TabController _horizontalTabController;
   late TabController _verticalTabController;
   late PageController _sneakersPageController;
+  int _index = 0;
+  int _oldIndex = 0;
+  ValueNotifier<double> _pageProgress = ValueNotifier(0);
   int _selectedCompanyIndex = 0;
   int _selectedCategoryIndex = 1;
   final companyFilterList = [
@@ -76,6 +79,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       setState(() {
         _selectedCategoryIndex = _verticalTabController.index;
       });
+    });
+    _sneakersPageController.addListener(() {
+      if (_sneakersPageController.page != null) {
+        double currentValue =
+            (_sneakersPageController.page! - _index.toDouble()).abs();
+
+        _pageProgress.value = currentValue;
+        if (_oldIndex != _index && _pageProgress.value < 0.01) {
+          _oldIndex = _index;
+        }
+      }
     });
     super.initState();
   }
@@ -246,40 +260,76 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             height: 380,
             child: PageView.builder(
               padEnds: false,
+              onPageChanged: (int index) => _onPageChanged(index),
               controller: _sneakersPageController,
-              itemCount: itemsList.length,
               itemBuilder: (context, index) {
-                return CarouselCard(
-                  brandName: itemsList[index].brandName,
-                  modelName: itemsList[index].modelName,
-                  price: itemsList[index].price,
-                  imagePath: itemsList[index].imagePath,
-                  backgroundColor: itemsList[index].backgroundColor,
-                  onTap: () => Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) =>
-                          SneakerDetailedScreen(entity: itemsList[index]),
-                      transitionDuration: const Duration(milliseconds: 400),
-                      transitionsBuilder: (_, a, __, c) => SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 0.2),
-                          end: Offset.zero,
-                        ).animate(a),
-                        child: FadeTransition(
-                          opacity: a,
-                          child: c,
+                return ValueListenableBuilder(
+                    valueListenable: _pageProgress,
+                    builder: (context, progress, widget) {
+                      progress = progress / 2;
+                      var tilt = ((progress - 0.5).abs() - 0.5) * 0.003;
+                      if (_oldIndex == index) {
+                        tilt = tilt * -1;
+                      }
+                      return Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.rotationY(progress)
+                          ..setEntry(3, 0, tilt),
+                        child: GestureDetector(
+                          onTap: () {
+                            _sneakersPageController.animateToPage(index,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.ease);
+                          },
+                          child: CarouselCard(
+                            brandName:
+                                itemsList[index % itemsList.length].brandName,
+                            modelName:
+                                itemsList[index % itemsList.length].modelName,
+                            price: itemsList[index % itemsList.length].price,
+                            imagePath:
+                                itemsList[index % itemsList.length].imagePath,
+                            backgroundColor: itemsList[index % itemsList.length]
+                                .backgroundColor,
+                            progress: progress,
+                            onTap: () => Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder:
+                                    (context, animation, secondaryAnimation) =>
+                                        SneakerDetailedScreen(
+                                  entity: itemsList[index % itemsList.length],
+                                ),
+                                transitionDuration:
+                                    const Duration(milliseconds: 400),
+                                transitionsBuilder: (_, a, __, c) =>
+                                    SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.2),
+                                    end: Offset.zero,
+                                  ).animate(a),
+                                  child: FadeTransition(
+                                    opacity: a,
+                                    child: c,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                );
+                      );
+                    });
               },
             ),
           ),
         ),
       ],
     );
+  }
+
+  _onPageChanged(int index) {
+    print('Page changed : $index');
+    _index = index;
   }
 
   _buildMoreSection() {
